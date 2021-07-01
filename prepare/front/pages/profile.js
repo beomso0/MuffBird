@@ -1,9 +1,23 @@
 import React from 'react';
 import AppLayout from "../components/AppLayout";
-
+import NicknameEditForm from "../components/NicknameEditForm";
+import FollowList from "../components/FollowList";
+import Head from 'next/head';
 
 const Profile = () => {
-    return <AppLayout>내 프로필</AppLayout>
+    const followerList = [{ nickname: '머핀'}, {nickname: '만두'}, {nickname: '댕댕'}];
+    const followingList = [{ nickname: '머핀'}, {nickname: '만두'}, {nickname: '댕댕'}]; //dummy data
+
+    return (
+        <>
+            <Head>내 프로필 | NodeBird</Head>
+            <AppLayout>
+                <NicknameEditForm />
+                <FollowList header='팔로잉 목록' data={followingList}/>
+                <FollowList header='팔로워 목록' data={followerList}/>
+            </AppLayout>
+        </>
+    );
 };
 
 export default Profile;
