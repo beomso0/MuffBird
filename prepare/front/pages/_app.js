@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 const NodeBird = ({ Component }) => {
     return (
-        < >
+        <>
             <Head>
                 <meta charSet="utf-8"></meta>
                 <title>NodeBird</title>
@@ -16,7 +16,7 @@ const NodeBird = ({ Component }) => {
 };
 
 NodeBird.propTypes = {
-    Component: PropTypes.elementType.isRequired,
+    Component: Proptypes.elementType.isRequired,
 };
 
 export default NodeBird;
