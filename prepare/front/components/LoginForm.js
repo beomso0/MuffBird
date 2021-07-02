@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Form, Input, Button } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
+import Proptypes from 'prop-types';
+import useInput from '../hooks/useInput';
 
 const ButtonWrapper = styled.div`
     margin-top: 10px; 
@@ -12,16 +14,8 @@ const FormWrapper = styled(Form)`
 `;
 
 const LoginForm = ({setIsLoggedIn}) => {
-    const [id, setId] = useState('');
-    const [password, setPassword] = useState('');
-
-    const onChaneId = useCallback((e) => {
-        setId(e.target.value);
-    }, []);
-
-    const onChanePassword = useCallback((e) => {
-        setPassword(e.target.value);
-    }, []);
+    const [id, onChangeId] = useInput('');
+    const [password, onChangePassword] = useInput(''); // --> custom hooks로 중복 제거
 
     const onSubmitForm = useCallback(() => {
         // onFinish에는 e.preventDefault가 이미 적용돼있음 --> 중복 x
@@ -36,7 +30,7 @@ const LoginForm = ({setIsLoggedIn}) => {
             <div>
                 <label htmlFor='user-id'>아이디</label>
                 <br />
-                <Input name='user-id' value={id} onChange={onChaneId} required/>
+                <Input name='user-id' value={id} onChange={onChangeId} required/>
             </div>
             <div>
                 <label htmlFor='user-password'>비밀번호</label>
@@ -44,7 +38,7 @@ const LoginForm = ({setIsLoggedIn}) => {
                 <Input 
                     name='user-password' 
                     value={password} 
-                    onChange={onChanePassword} 
+                    onChange={onChangePassword} 
                     required
                 /> {/* 나중엔 react form 등의 라이브러리 쓰면 좋음 */}
             </div>
@@ -58,5 +52,9 @@ const LoginForm = ({setIsLoggedIn}) => {
         </FormWrapper>
     );
 }
+
+LoginForm.proptypes = {
+    setIsLoggedIn: Proptypes.func.isRequired,
+};
 
 export default LoginForm;
