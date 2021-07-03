@@ -6,13 +6,17 @@ import { useState } from 'react';
 import UserProfile from '../components/UserProfile'
 import LoginForm from '../components/LoginForm'
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 const SearchInput = styled(Input.Search)`
     vertical-align: middle;
 `           /* antd 컴포도 styled로 커스터마이징 가능 */
 
 const AppLayout = ({children}) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); //setIsLoggedIn은 가상의 logIn 여부 데이터.
+    const isLoggedIn = useSelector((state) => state.user.isLoggedIn); //이게 바뀌면 알아서  page가 rerendering됨.
+    // 구조 분해 할당으로 아래와 같이 쓸 수도 있음. 성능 차 있긴 하지만 미미함.
+  //const { isLoggedIn } = useSelector((state) => state.user);
+
     return (
      <div>
         <Menu mode='horizontal'>
@@ -31,7 +35,7 @@ const AppLayout = ({children}) => {
         </Menu>
         <Row gutter={8}> {/* gutter는 간격 */}
             <Col xs = {24} md={6}>     {/*xs:모바일 sm:태블릿 md:작은 데스크탑 || 24가 가로 full 수치*/}
-                {isLoggedIn ? <UserProfile setIsLoggedIn={setIsLoggedIn}/> : <LoginForm setIsLoggedIn={setIsLoggedIn} />} {/* 로그인 돼있으면 up보여주고, 안되있으면 로긴폼 보여주기 react의 조건문인듯? */}
+                {isLoggedIn ? <UserProfile /> : <LoginForm />} {/* 로그인 돼있으면 up보여주고, 안되있으면 로긴폼 보여주기 react의 조건문인듯? */}
             </Col>  
             <Col xs = {24} md={12}>    {/* xs 일때는 한 col이 가로를 full로 차지해서 세로로 쌓임 || md가 되면 .25.5 .25로 col 3개 들어감*/}
                 {children}
