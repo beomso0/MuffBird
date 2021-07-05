@@ -1,8 +1,8 @@
 import { HYDRATE } from "next-redux-wrapper"; //hydrate는 액션 중 하나 
+import { combineReducers } from "redux";
 
 import user from './user';
 import post from './post';
-import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
     index: (state = {}, action) => { //이건 hydrate(서버사이드렌더링)을 위해 index 리듀서를 추가한 것.
