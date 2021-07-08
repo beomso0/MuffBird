@@ -37,10 +37,10 @@ export const addPost = {
 
 const dummyPost = {
     id: 2,
-    contnet: 'dummdumm',
+    content: 'dummdumm',
     User: {
         id: 1,
-        nickname: 'beomso0'
+        nickname: '뭉수'
     },
     Images: [],
     Comments: [],

@@ -7,6 +7,7 @@ import UserProfile from '../components/UserProfile'
 import LoginForm from '../components/LoginForm'
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
+import { createGlobalStyle } from 'styled-components';
 
 const SearchInput = styled(Input.Search)`
     vertical-align: middle;
@@ -17,8 +18,24 @@ const AppLayout = ({children}) => {
     // 구조 분해 할당으로 아래와 같이 쓸 수도 있음. 성능 차 있긴 하지만 미미함.
   //const { isLoggedIn } = useSelector((state) => state.user);
 
+const Global = createGlobalStyle` /* gutter 문제 해결 */
+    .ant-row {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    .ant-col:first-child {
+        margin-left: 0 !important;
+    }
+
+    .ant-col:last-child {
+        margin-right: 0 !important;
+    }
+`;
+
     return (
      <div>
+        <Global />
         <Menu mode='horizontal'>
             <Menu.Item>
                 <Link href="/"><a>노드버드</a></Link>

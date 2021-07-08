@@ -1,6 +1,6 @@
 export const initialState = {
     isLoggedIn: false,
-    user: null,
+    me: null,
     signUpData: {},
     loginData: {},
 };
@@ -11,13 +11,13 @@ const reducer = (state=initialState, action) => {
             return {
                 ...state, //참조관계 유지
                 isLoggedIn: true, //내가 바꾸고 싶은 부분만 수정
-                user: action.data,
+                me: action.data,
             };
         case 'LOG_OUT':
             return {
                 ...state, //참조관계 유지
                 isLoggedIn: false, //내가 바꾸고 싶은 부분만 수정
-                user: null,
+                me: null,
             };
         default :
             return state;
