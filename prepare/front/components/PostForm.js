@@ -39,7 +39,7 @@ const PostForm = () => {
                         <div>
                             <Button>제거</Button>
                         </div>
-                    </div>
+                    </div> 
                 )) }
             </div>
         </Form>

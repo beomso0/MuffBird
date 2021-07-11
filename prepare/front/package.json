@@ -1,7 +1,6 @@
 {
   "name": "react-nodebird-front",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "next -p 3060"
@@ -27,5 +26,6 @@
     "eslint-plugin-hooks": "^0.2.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-react": "^7.24.0"
-  }
+  },
+  "description": ""
 }
