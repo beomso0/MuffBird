@@ -18,20 +18,20 @@ const AppLayout = ({children}) => {
     // 구조 분해 할당으로 아래와 같이 쓸 수도 있음. 성능 차 있긴 하지만 미미함.
   //const { isLoggedIn } = useSelector((state) => state.user);
 
-const Global = createGlobalStyle` /* gutter 문제 해결 */
-    .ant-row {
-        margin-right: 0 !important;
-        margin-left: 0 !important;
-    }
+    const Global = createGlobalStyle` /* gutter 문제 해결 */
+        .ant-row {
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
 
-    .ant-col:first-child {
-        margin-left: 0 !important;
-    }
+        .ant-col:first-child {
+            margin-left: 0 !important;
+        }
 
-    .ant-col:last-child {
-        margin-right: 0 !important;
-    }
-`;
+        .ant-col:last-child {
+            margin-right: 0 !important;
+        }
+    `;
 
     return (
      <div>
