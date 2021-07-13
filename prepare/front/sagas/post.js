@@ -1,22 +1,32 @@
 import { all, fork, takeLatest, delay, put } from 'redux-saga/effects';
 import axios from 'axios';
+import shortId from 'shortid';
 import {
   ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE,
   ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE,
 } from '../reducers/post';
+import { ADD_POST_TO_ME } from '../reducers/user';
 
 function addPostAPI(data) {
   // return axios.post('/api/post', data);
 }
 
-function* addPost(action) {
+function* addPost(action) { // saga는 여러개의 액션을 실행할 수 있음.
   try {
     // const result = yield call(addPostAPI, action.data);
     yield delay(1000);
+    const id = shortId.generate();
     yield put({
       type: ADD_POST_SUCCESS,
-      data: action.data,
+      data: {
+        id,
+        content: action.data,
+      },
       // data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: id,
     });
   } catch (err) {
     yield put({ // put은 dispatch와 거의 같음.

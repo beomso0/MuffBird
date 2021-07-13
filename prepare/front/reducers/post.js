@@ -9,19 +9,26 @@ export const initialState = {
     },
     content: '첫번째 게시글 #해시태그 #하이하이',
     Images: [{
+      id: shortId.generate(),
       src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
     }, {
+      id: shortId.generate(),
       src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
     }, {
+      id: shortId.generate(),
       src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
     }],
     Comments: [{
+      id: shortId.generate(),
       User: {
+        id: shortId.generate(), // 대문자로 된 애들에는 다 id가 있어야 함!!
         nickname: 'beomso0',
       },
       content: 'Great!',
     }, {
+      id: shortId.generate(),
       User: {
+        id: shortId.generate(),
         nickname: 'muffin',
       },
       content: 'hihi',
