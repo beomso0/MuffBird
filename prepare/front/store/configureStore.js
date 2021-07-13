@@ -12,7 +12,7 @@ const configureStore = () => {
     const middlewares = [sagaMiddleware];
     const enhancer = process.env.NODE_ENV === 'production' // 이 조건문이 true면 ? 값으로 변수 지정, false면 : 값으로 지정.
         ? compose(applyMiddleware(...middlewares)) //배포용일 때는 devtool에 연결 x
-        : composeWithDevTools(applyMiddleware(...middlewares)); //개발모드에서는 devtool에 연결.
+        : composeWithDevTools(applyMiddleware(...middlewares));c //개발모드에서는 devtool에 연결.
     const store = createStore(reducer, enhancer); // store는 state랑 reducer를 포함
     store.sagaTask = sagaMiddleware.run(rootSaga);
     return store;
