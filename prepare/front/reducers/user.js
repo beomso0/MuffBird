@@ -97,7 +97,7 @@ const reducer = (state = initialState, action) => {
       case LOG_IN_SUCCESS: // saga에서 action type name에 맞게 지정.
         draft.logInLoading = false;
         draft.logInDone = true; // 내가 바꾸고 싶은 부분만 수정
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       case LOG_IN_FAILURE: // saga에서 action type name에 맞게 지정.
         draft.logInLoading = false;

@@ -23,16 +23,15 @@ export const logoutRequestAction = () => {
 };
 
 function logInAPI(data) {
-  // return axios.post('/api/login', data);
+  return axios.post('/user/login', data);
 }
 
 function* logIn(action) {
   try {
-    // const result = yield call(logInAPI, action.data);
-    yield delay(1000);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     yield put({ // put은 dispatch와 거의 같음.
@@ -43,7 +42,7 @@ function* logIn(action) {
 }
 
 function logOutAPI() {
-  // return axios.post('/api/logout');
+  return axios.post('/user/logout');
 }
 
 function* logOut() {
@@ -63,7 +62,7 @@ function* logOut() {
 }
 
 function signUpAPI(data) { // signup api는 generator가 아님에 주의.
-  return axios.post('http://localhost:3065/user', data); // 데이터가 routes/user.js에서 req.body에 해당함.
+  return axios.post('/user', data); // 데이터가 routes/user.js에서 req.body에 해당함.
 }
 
 function* signUp(action) {

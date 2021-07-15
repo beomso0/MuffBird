@@ -5,15 +5,18 @@
 
 import { all, fork } from 'redux-saga/effects';
 
+import axios from 'axios';
 import postSaga from './post';
 import userSaga from './user';
 
-//call은 동기 함수라서 결과 올떄까지 기다림 <-> fork는 비동기 함수 요청이라서, 결과 기다리지 않고 바로 다음줄 실행.
+// call은 동기 함수라서 결과 올떄까지 기다림 <-> fork는 비동기 함수 요청이라서, 결과 기다리지 않고 바로 다음줄 실행.
 // yield는 await이랑 비슷한 역할이라고 생각해도 됨.
 
+axios.defaults.baseURL = 'http://localhost:3065';
+
 export default function* rootSaga() {
-    yield all([
-        fork(postSaga), //fork는 함수를 실행하는 것. 
-        fork(userSaga), //근데 call이랑은 다름. then, how different?
-    ]);
+  yield all([
+    fork(postSaga), // fork는 함수를 실행하는 것.
+    fork(userSaga), // 근데 call이랑은 다름. then, how different?
+  ]);
 }
