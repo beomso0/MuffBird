@@ -1,4 +1,4 @@
-import { all, fork, takeLatest, delay, put } from 'redux-saga/effects';
+import { all, fork, takeLatest, delay, put, call } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   FOLLOW_REQUEST, FOLLOW_SUCCESS, FOLLOW_FAILURE,
@@ -62,17 +62,16 @@ function* logOut() {
   }
 }
 
-function signUpAPI() { // signup api는 generator가 아님에 주의.
-  // return axios.post('/api/signUp');
+function signUpAPI(data) { // signup api는 generator가 아님에 주의.
+  return axios.post('http://localhost:3065/user', data); // 데이터가 routes/user.js에서 req.body에 해당함.
 }
 
-function* signUp() {
+function* signUp(action) {
   try {
-    // const result = yield call(signUpAPI);
-    yield delay(1000);
+    const result = yield call(signUpAPI, action.data);
+    console.log(result);
     yield put({
       type: SIGN_UP_SUCCESS,
-      // data: result.data,
     });
   } catch (err) {
     yield put({ // put은 dispatch와 거의 같음.
