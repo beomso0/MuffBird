@@ -4,13 +4,17 @@ import AppLayout from '../components/AppLayout';
 import PostCard from '../components/PostCard';
 import PostFrom from '../components/PostForm';
 import { LOAD_POST_REQUEST } from '../reducers/post';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePost, loadPostLoading } = useSelector((state) => state.post);
-
   const dispatch = useDispatch();
+
   useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
     dispatch({
       type: LOAD_POST_REQUEST,
     });

@@ -1,6 +1,9 @@
 import produce from 'immer';
 
 export const initialState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false, // 로그인 시도 중.
+  loadMyInfoError: null,
   followLoading: false,
   followDone: false, // 로그인 시도 중.
   followError: null,
@@ -20,6 +23,10 @@ export const initialState = {
   signUpData: {},
   loginData: {},
 };
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -60,6 +67,20 @@ const dummyUser = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_MY_INFO_REQUEST: // saga에서 action type name에 맞게 지정.
+        draft.loadMyInfolLoading = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadMyInfoError = null;
+        draft.loadMyInfoDone = false;
+        break;
+      case LOAD_MY_INFO_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoDone = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.me = action.data;
+        break;
+      case LOAD_MY_INFO_FAILURE: // saga에서 action type name에 맞게 지정.
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.error;
+        break;
       case FOLLOW_REQUEST: // saga에서 action type name에 맞게 지정.
         draft.followlLoading = true; // 내가 바꾸고 싶은 부분만 수정
         draft.followError = null;

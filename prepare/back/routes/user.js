@@ -5,6 +5,37 @@ const router = express.Router();
 const { User, Post } = require('../models'); // --> db.User 가져옴. (구조분해 할당)
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
+router.get('/', async (req, res, next) => { // --> GET/user
+  try {
+    if (req.user) {
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ['password'], // 전체에서 password만 제외하고 정보 가져오기
+        },
+        include: [{
+          model: Post,
+          attributes: ['id'], // 프론트에 필요한 정보만 전달하기 위해서
+        }, {
+          model: User,
+          as: 'Followings',
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Followers',
+          attributes: ['id'],
+        }],
+      });
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }    
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.post('/login', isNotLoggedIn ,(req, res, next) => {
   passport.authenticate('local', (err, user, info) => { // (err,user,info) 여기는 done이 넘겨주는 콜백 부분
     if (err) { // 서버 에러
@@ -27,14 +58,17 @@ router.post('/login', isNotLoggedIn ,(req, res, next) => {
         },
         include: [{
           model: Post,
+          attributes: ['id'],
         }, {
           model: User,
           as: 'Followings',
+          attributes: ['id'],
         }, {
           model: User,
           as: 'Followers',
+          attributes: ['id'],
         }],
-      })
+      });
       return res.status(200).json(fullUserWithoutPassword); // 최종 로그인. 프론트 서버로 user 정보 전달.
     })
   })(req, res, next); // next로 에러처리 한 번에 하기 위해 미들웨어를 확장함.

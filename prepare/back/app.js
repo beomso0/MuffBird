@@ -19,10 +19,11 @@ db.sequelize.sync() //promise 여서 .then으로 적어주어야 함.
   })
   .catch(console.error);
 
-app.use(cors({
-  origin: true, // 실무에서는 이 도메인을 따로 지정해서 해킹 위협 낮춤.
-  credentials: false,
+app.use(cors({ // CORS
+  origin: 'http://localhost:3060', // 실무에서는 이 도메인을 따로 지정해서 해킹 위협 낮춤.
+  credentials: true, // --> 이거 해줘야 프론트에서 백엔드로 쿠키 전달 가능 --> 그래야 백엔드에서 사용자 정보 받아서 권한 부여 가능. 
 }));
+
 app.use(express.json()); //use는 프론트에서 받은 데이터를 해석해서 라우터에 넣어주는 역할
 app.use(express.urlencoded({ extended: true })); // 이 부분은 라우터보다 먼저 작성해주어야 함. Form 처리해주는 역할.
 app.use(cookieParser(process.env.COOKIE_SECRET));

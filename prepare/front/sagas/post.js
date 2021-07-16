@@ -55,7 +55,9 @@ function* addPost(action) { // saga는 여러개의 액션을 실행할 수 있�
 }
 
 function removePostAPI(data) {
-  // return axios.delete('/api/post', data);
+  // return axios.delete('/api/post', data, {
+  //   withCredentials: true,
+  // });
 }
 
 function* removePost(action) { // saga는 여러개의 액션을 실행할 수 있음.

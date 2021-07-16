@@ -13,6 +13,7 @@ import userSaga from './user';
 // yield는 await이랑 비슷한 역할이라고 생각해도 됨.
 
 axios.defaults.baseURL = 'http://localhost:3065';
+axios.defaults.withCredentials = true; // 이게 있어야 쿠키 전송 가능
 
 export default function* rootSaga() {
   yield all([
