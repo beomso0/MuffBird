@@ -65,26 +65,6 @@ export const addComment = (data) => ({
   data, // 작성한 글에 해당
 });
 
-const dummyPost = (data) => ({
-  id: data.id,
-  content: data.content,
-  User: {
-    id: 1,
-    nickname: '뭉수',
-  },
-  Images: [],
-  Comments: [],
-});
-
-const dummyComment = (data) => ({
-  id: shortId.generate(),
-  content: data,
-  User: {
-    id: 1,
-    nickname: '뭉수',
-  },
-});
-
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => { // 이게 immer의 기본꼴임. immer가 알아서 불변성을 지켜줌. state는 건드리면 안됨.
     switch (action.type) {
@@ -112,7 +92,7 @@ const reducer = (state = initialState, action) => {
       case ADD_POST_SUCCESS:
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.mainPosts.unshift(dummyPost(action.data)); // 앞에다 추가를 해야 위에 올라감.
+        draft.mainPosts.unshift(action.data); // 앞에다 추가를 해야 위에 올라감.
         // unshift: 배열의 맨 앞에 요소 추가하고, 그 길이를 return하는 함수
         break;
       case ADD_POST_FAILURE:
@@ -139,8 +119,8 @@ const reducer = (state = initialState, action) => {
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS:
-        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-        post.Comments.unshift(dummyComment(action.data.content));
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addPostDone = true;
         break;

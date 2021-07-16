@@ -49,6 +49,13 @@ app.get('/api/posts', (req, res) => {
 app.use('/post', postRouter); // /post 경로를 postRouter 안의 router들에 prefix
 app.use('/user', userRouter);
 
+// 이 자리에 내부적으로 에러처리 미들웨어(next(err))가 있음
+// 아래와 같이 따로 정의해줄 수도 있음.
+// 에러 페이지를 따로 띄워주고 싶거나 할 때.
+// app.use((err, req, res, next) => {
+
+// });
+
 app.listen(3065, () => {
   console.log('서버 실행 중');
 });

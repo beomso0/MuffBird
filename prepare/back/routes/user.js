@@ -2,9 +2,10 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const router = express.Router();
-const { User } = require('../models'); // --> db.User 가져옴. (구조분해 할당)
+const { User, Post } = require('../models'); // --> db.User 가져옴. (구조분해 할당)
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
-router.post('/login', (req, res, next) => {
+router.post('/login', isNotLoggedIn ,(req, res, next) => {
   passport.authenticate('local', (err, user, info) => { // (err,user,info) 여기는 done이 넘겨주는 콜백 부분
     if (err) { // 서버 에러
       console.error(err);
@@ -19,12 +20,27 @@ router.post('/login', (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
-      return res.status(200).json(user); // 최종 로그인. 프론트 서버로 user 정보 전달.
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        attributes: {
+          exclude: ['password'], // 전체에서 password만 제외하고 정보 가져오기
+        },
+        include: [{
+          model: Post,
+        }, {
+          model: User,
+          as: 'Followings',
+        }, {
+          model: User,
+          as: 'Followers',
+        }],
+      })
+      return res.status(200).json(fullUserWithoutPassword); // 최종 로그인. 프론트 서버로 user 정보 전달.
     })
   })(req, res, next); // next로 에러처리 한 번에 하기 위해 미들웨어를 확장함.
 }); // passport에서 정의한 local 전략이 실행됨.
 
-router.post('/', async (req, res, next) => { //POST/user/ --> saga의 signUp api에서 axios 호출하는 부분이랑 경로 같음.
+router.post('/', isNotLoggedIn, async (req, res, next) => { //POST/user/ --> saga의 signUp api에서 axios 호출하는 부분이랑 경로 같음.
   try {
     // 이메일 중복 검사
     const exUser = await User.findOne({
@@ -52,10 +68,10 @@ router.post('/', async (req, res, next) => { //POST/user/ --> saga의 signUp api
   }
 });
 
-router.post('/user/logout', (req, res) => {
-  req.logout();
+router.post('/logout', isLoggedIn, (req, res) => {
+  req.logOut();
   req.session.destroy(); 
-  req.send('ok');
+  res.send('ok');
 });
 
 module.exports = router;
