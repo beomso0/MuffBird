@@ -10,6 +10,7 @@ const db = require('./models');
 const passportConfig = require('./passport'); 
 const passport = require('passport');
 const app = express();
+const morgan = require('morgan');
 
 dotenv.config();
 passportConfig();
@@ -20,6 +21,7 @@ db.sequelize.sync() //promise 여서 .then으로 적어주어야 함.
   })
   .catch(console.error);
 
+app.use(morgan('dev')); // 프론트에서 백엔드로 보내는 요청을 기록해줌
 app.use(cors({ // CORS
   origin: 'http://localhost:3060', // 실무에서는 이 도메인을 따로 지정해서 해킹 위협 낮춤.
   credentials: true, // --> 이거 해줘야 프론트에서 백엔드로 쿠키 전달 가능 --> 그래야 백엔드에서 사용자 정보 받아서 권한 부여 가능. 
@@ -40,17 +42,10 @@ app.get('/', (req, res) => { // url('/') + method(get)
   res.send('hello express');
 });
 
-app.get('/api/posts', (req, res) => {
-  res.json([
-    { id: 1, content: 'hello' },
-    { id: 2, content: 'hello2' },
-    { id: 3, content: 'hello3' },
-  ]);
-});
 
+app.use('/posts', postsRouter);
 app.use('/post', postRouter); // /post 경로를 postRouter 안의 router들에 prefix
 app.use('/user', userRouter);
-app.use('/posts', postsRouter);
 
 // 이 자리에 내부적으로 에러처리 미들웨어(next(err))가 있음
 // 아래와 같이 따로 정의해줄 수도 있음.

@@ -90,6 +90,7 @@ function* addComment(action) {
       // data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({ // put은 dispatch와 거의 같음.
       type: ADD_COMMENT_FAILURE,
       // data: err.response.data,

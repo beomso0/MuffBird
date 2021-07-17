@@ -5,23 +5,28 @@ const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
-router.post('/', isLoggedIn,async (req, res, next) => { // POST/post
+router.post('/', isLoggedIn, async (req, res, next) => { // POST/post
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
-    const fullPost = Post.findOne({
+    const fullPost = await Post.findOne({
       where: { id: post.id },
       include: [{
         model: Image,
       }, {
         model: Comment,
+        include: [{
+          model: User,
+          attributes: ['id', 'nickname'],          
+        }]
       }, {
         model: User,
+        attributes: ['id', 'nickname'],
       }]
     });
-    res.status(201).json(post);
+    res.status(201).json(fullPost);
   } catch (error) {
     console.error(error);
     next(error);
@@ -42,10 +47,19 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => { // POST/
 
     const comment = await Comment.create({
       content: req.body.content,
-      PostId: req.params.postId,
+      PostId: parseInt(req.params.postId),
       UserId: req.user.id, // --> passport에서 자동으로 desrializeuser 해서 req.user에 접근 가능.
     });
-    res.status(201).json(comment);
+
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [{
+        model: User,
+        attributes: ['id', 'nickname'],
+      }],
+    });
+
+    res.status(201).json(fullComment);
   } catch (error) {
     console.error(error);
     next(error);

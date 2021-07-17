@@ -122,7 +122,7 @@ const reducer = (state = initialState, action) => {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
-        draft.addPostDone = true;
+        draft.addCommentDone = true;
         break;
         // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
         // const post = { ...state.mainPosts[postIndex] };

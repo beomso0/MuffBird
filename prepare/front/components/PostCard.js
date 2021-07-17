@@ -96,7 +96,7 @@ PostCard.propTypes = {
     id: PropTypes.number,
     User: PropTypes.object,
     content: PropTypes.string,
-    createdAt: PropTypes.object,
+    createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object), // 객체들의 배열이라는 뜻
     Images: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
