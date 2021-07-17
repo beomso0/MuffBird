@@ -20,24 +20,24 @@ export const initialState = {
   addCommentError: null,
 };
 
-export const generateDummyPost = (number) => Array(number).fill().map(() => ({
-  id: shortId.generate(),
-  User: {
-    id: shortId.generate(),
-    nickname: faker.name.findName(),
-  },
-  content: faker.lorem.paragraphs(),
-  Images: [{
-    src: faker.image.image(),
-  }],
-  Comments: [{
-    User: {
-      id: shortId.generate(),
-      nickname: faker.name.findName(),
-    },
-    content: faker.lorem.paragraph(),
-  }],
-}));
+// export const generateDummyPost = (number) => Array(number).fill().map(() => ({
+//   id: shortId.generate(),
+//   User: {
+//     id: shortId.generate(),
+//     nickname: faker.name.findName(),
+//   },
+//   content: faker.lorem.paragraphs(),
+//   Images: [{
+//     src: faker.image.image(),
+//   }],
+//   Comments: [{
+//     User: {
+//       id: shortId.generate(),
+//       nickname: faker.name.findName(),
+//     },
+//     content: faker.lorem.paragraph(),
+//   }],
+// }));
 
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';

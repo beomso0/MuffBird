@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const postsRouter = require('./routes/posts');
 const db = require('./models');
 const passportConfig = require('./passport'); 
 const passport = require('passport');
@@ -49,6 +50,7 @@ app.get('/api/posts', (req, res) => {
 
 app.use('/post', postRouter); // /post 경로를 postRouter 안의 router들에 prefix
 app.use('/user', userRouter);
+app.use('/posts', postsRouter);
 
 // 이 자리에 내부적으로 에러처리 미들웨어(next(err))가 있음
 // 아래와 같이 따로 정의해줄 수도 있음.
