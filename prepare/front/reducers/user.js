@@ -19,14 +19,35 @@ export const initialState = {
   signUpLoading: false,
   signUpDone: false, // 로그인 시도 중.
   signUpFailure: null,
+  loadFollowersLoading: false,
+  loadFollowersDone: false, // 로그인 시도 중.
+  loadFollowersFailure: null,
+  loadFollowingsLoading: false,
+  loadFollowingsDone: false, // 로그인 시도 중.
+  loadFollowingsFailure: null,
+  removeFollowerLoading: false,
+  removeFollowerDone: false, // 로그인 시도 중.
+  removeFollowerFailure: null,
   me: null,
   signUpData: {},
   loginData: {},
 };
 
+export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
+export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
+export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
+
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
 export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
+export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
+export const LOAD_FOLLOWERS_FAILURE = 'LOAD_FOLLOWERS_FAILURE';
+
+export const LOAD_FOLLOWINGS_REQUEST = 'LOAD_FOLLOWINGS_REQUEST';
+export const LOAD_FOLLOWINGS_SUCCESS = 'LOAD_FOLLOWINGS_SUCCESS';
+export const LOAD_FOLLOWINGS_FAILURE = 'LOAD_FOLLOWINGS_FAILURE';
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -55,15 +76,6 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: '범수',
-  id: 1,
-  Posts: [{ id: 1 }],
-  Followings: [{ nickname: '밤수' }, { nickname: '범수' }, { nickname: '모피니' }],
-  Followers: [{ nickname: '밤수' }, { nickname: '범수' }, { nickname: '모피니' }],
-});
-
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -89,7 +101,7 @@ const reducer = (state = initialState, action) => {
       case FOLLOW_SUCCESS: // saga에서 action type name에 맞게 지정.
         draft.followLoading = false;
         draft.followDone = true; // 내가 바꾸고 싶은 부분만 수정
-        draft.me.Followings.push({ id: action.data });
+        draft.me.Followings.push({ id: action.data.UserId });
         break;
       case FOLLOW_FAILURE: // saga에서 action type name에 맞게 지정.
         draft.followLoading = false;
@@ -103,7 +115,7 @@ const reducer = (state = initialState, action) => {
       case UNFOLLOW_SUCCESS: // saga에서 action type name에 맞게 지정.
         draft.unfollowLoading = false;
         draft.unfollowDone = true; // 내가 바꾸고 싶은 부분만 수정
-        draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data);
+        draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data.UserId);
         // 언팔할 사람만 빠짐
         break;
       case UNFOLLOW_FAILURE: // saga에서 action type name에 맞게 지정.
@@ -159,12 +171,55 @@ const reducer = (state = initialState, action) => {
         draft.changeNicknameError = null;
         break;
       case CHANGE_NICKNAME_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.me.nickname = action.data.nickname;
         draft.changeNicknameLoading = false; // 내가 바꾸고 싶은 부분만 수정
         draft.changeNicknameDone = true;
         break;
       case CHANGE_NICKNAME_FAILURE: // saga에서 action type name에 맞게 지정.
         draft.changeNicknameLoading = false; // 내가 바꾸고 싶은 부분만 수정
         draft.changeNicknameError = action.error;
+        break;
+      case LOAD_FOLLOWERS_REQUEST:
+        draft.loadFollowersLoading = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowersDone = false;
+        draft.loadFollowersError = null;
+        break;
+      case LOAD_FOLLOWERS_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.me.Followers = action.data;
+        draft.loadFollowersLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowersDone = true;
+        break;
+      case LOAD_FOLLOWERS_FAILURE: // saga에서 action type name에 맞게 지정.
+        draft.loadFollowersLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowersError = action.error;
+        break;
+      case LOAD_FOLLOWINGS_REQUEST:
+        draft.loadFollowingsLoading = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowingsDone = false;
+        draft.loadFollowingsError = null;
+        break;
+      case LOAD_FOLLOWINGS_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.me.Followings = action.data;
+        draft.loadFollowingsLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowingsDone = true;
+        break;
+      case LOAD_FOLLOWINGS_FAILURE: // saga에서 action type name에 맞게 지정.
+        draft.loadFollowingsLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadFollowingsError = action.error;
+        break;
+      case REMOVE_FOLLOWER_REQUEST:
+        draft.removeFollowerLoading = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.removeFollowerDone = false;
+        draft.removeFollowerError = null;
+        break;
+      case REMOVE_FOLLOWER_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.me.Followers = draft.me.Followers.filter((v) => v.id !== action.data.UserId);
+        draft.removeFollowerLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.removeFollowerDone = true;
+        break;
+      case REMOVE_FOLLOWER_FAILURE: // saga에서 action type name에 맞게 지정.
+        draft.removeFollowerLoading = false; // 내가 바꾸고 싶은 부분만 수정
+        draft.removeFollowerError = action.error;
         break;
       case ADD_POST_TO_ME:
         draft.me.Posts.unshift({ id: action.data });
@@ -203,11 +258,5 @@ export const loginRequestAction = (data) => ({
 export const logoutRequestAction = () => ({
   type: LOG_OUT_REQUEST,
 });
-
-// action creator //action은 객체임!!
-const changeNickname = (data) => ({
-  type: CHANE_NICKNAME,
-  data,
-}); // --> store.dispatch(changeNickname('mama muffin'))
 
 export default reducer;

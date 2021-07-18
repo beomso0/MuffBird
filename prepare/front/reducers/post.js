@@ -18,6 +18,12 @@ export const initialState = {
   addCommentLoading: false, // 게시 완료되면 true
   addCommentDone: false,
   addCommentError: null,
+  likePostLoading: false, // 게시 완료되면 true
+  likePostDone: false,
+  likePostError: null,
+  unlikePostLoading: false, // 게시 완료되면 true
+  unlikePostDone: false,
+  unlikePostError: null,
 };
 
 // export const generateDummyPost = (number) => Array(number).fill().map(() => ({
@@ -38,6 +44,14 @@ export const initialState = {
 //     content: faker.lorem.paragraph(),
 //   }],
 // }));
+
+export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LIKE_POST_FAILURE';
+
+export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
+export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
+export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
@@ -68,6 +82,39 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => { // 이게 immer의 기본꼴임. immer가 알아서 불변성을 지켜줌. state는 건드리면 안됨.
     switch (action.type) {
+      case LIKE_POST_REQUEST:
+        draft.likePostLoading = true;
+        draft.likePostDone = false;
+        draft.likePostError = null;
+        break;
+      case LIKE_POST_SUCCESS:
+        // action data PostId, UserId 들어있음.
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Likers.push({ id: action.data.UserId });
+        draft.likePostLoading = false;
+        draft.likePostDone = true;
+        break;
+      case LIKE_POST_FAILURE:
+        draft.likePostLoading = false;
+        draft.likePostError = action.error;
+        break;
+      case UNLIKE_POST_REQUEST:
+        draft.unlikePostLoading = true;
+        draft.unlikePostDone = false;
+        draft.unlikePostError = null;
+        break;
+      case UNLIKE_POST_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+        draft.unlikePostLoading = false;
+        draft.unlikePostDone = true;
+        // unshift: 배열의 맨 앞에 요소 추가하고, 그 길이를 return하는 함수
+        break;
+      }
+      case UNLIKE_POST_FAILURE:
+        draft.unlikePostLoading = false;
+        draft.unlikePostError = action.error;
+        break;
       case LOAD_POST_REQUEST:
         draft.loadPostLoading = true;
         draft.loadPostDone = false;
@@ -105,7 +152,7 @@ const reducer = (state = initialState, action) => {
         draft.removePostError = null;
         break;
       case REMOVE_POST_SUCCESS:
-        draft.mainPosts = state.mainPosts.filter((v) => v.id !== action.data); // 앞에다 추가를 해야 위에 올라감.
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId); // 앞에다 추가를 해야 위에 올라감.
         draft.removePostLoading = false;
         draft.removePostDone = true;
         break;
@@ -118,22 +165,23 @@ const reducer = (state = initialState, action) => {
         draft.addCommentDone = false;
         draft.addCommentError = null;
         break;
-      case ADD_COMMENT_SUCCESS:
+      case ADD_COMMENT_SUCCESS: {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;
-        // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-        // const post = { ...state.mainPosts[postIndex] };
-        // post.Comments = [dummyComment(action.data.content), ...post.Comments];
-        // const mainPosts = [...state.mainPosts]; // 불변성을 유지하느라 코드가 이렇게 길어짐 ㅠㅠ
-        // mainPosts[postIndex] = post; // 이걸 편하게 할 수 있는 라이브러리가 '이머'
-        // return {
-        //   ...state,
-        //   mainPosts,
-        //   addCommentLoading: false,
-        //   addCommentDone: true,
+      }
+      // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      // const post = { ...state.mainPosts[postIndex] };
+      // post.Comments = [dummyComment(action.data.content), ...post.Comments];
+      // const mainPosts = [...state.mainPosts]; // 불변성을 유지하느라 코드가 이렇게 길어짐 ㅠㅠ
+      // mainPosts[postIndex] = post; // 이걸 편하게 할 수 있는 라이브러리가 '이머'
+      // return {
+      //   ...state,
+      //   mainPosts,
+      //   addCommentLoading: false,
+      //   addCommentDone: true,
       case ADD_COMMENT_FAILURE:
         draft.addCommentLoading = false;
         draft.addCommentError = action.error;

@@ -23,11 +23,13 @@ module.exports = (sequelize, DataTypes) => {
    });
    User.associate = (db) => { // 여기서 관계 정의. 
     // user와 post 간의 '일대다관계'
-    db.User.hasMany(db.Post); //사람 하나가 여러 포스트를 가질 수 있다. -> post에 가서도 정의해주어야 함.
-    db.User.hasMany(db.Comment);
+    db.User.hasMany(db.Post); // post.addUser, post.getUser
+    //사람 하나가 여러 포스트를 가질 수 있다. -> post에 가서도 정의해주어야 함.
+    db.User.hasMany(db.Comment); // post addComments, post.getComments 
     db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liked' }); // 사용자와 좋아요(post 산하 정보)는 다대다 관계
     // through로 중간테이블의 이름을 지정할 수도 있음.
     // as로 관계별 대상의 별칭을 붙일 수 있음.
+    // user.addPosts, user.getPosts, user.removePosts 등이 생김
     db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers', foreignKey: 'FollowingId' });
     db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings', foreignKey: 'FollowerId' });
     // 같은 테이블 내에서 관계 생성할 때는 foreignKey 넣어주어야 함.
