@@ -14,10 +14,12 @@ const FollowList = ({ header, data }) => {
         data: id,
       });
     }
-    dispatch({
-      type: REMOVE_FOLLOWER_REQUEST,
-      data: id,
-    });
+    if (header === '팔로워') {
+      dispatch({
+        type: REMOVE_FOLLOWER_REQUEST,
+        data: id,
+      });
+    }
   };
 
   return (

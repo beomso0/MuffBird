@@ -7,16 +7,20 @@ import {
   ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE,
   LIKE_POST_REQUEST, LIKE_POST_SUCCESS, LIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
+  UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE,
+  RETWEET_REQUEST, RETWEET_SUCCESS, RETWEET_FAILURE,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
-function loadPostAPI(data) {
-  return axios.get('/posts', data);
+function loadPostAPI(lastId) {
+  return axios.get(`/posts?lastId=${lastId || 0}`); // lastId가 undefined인 경우에는 0으로
+  // get 에서 데이터 선택해서 불러올 때는 ? 이후에 / key = value / 형태로 query string을 만들어 보냄.
+  // --> 주소를 캐싱하면 데이터까지 캐싱할 수 있어서 좋음. --> get만의 이점.
 }
 
 function* loadPost(action) { // saga는 여러개의 액션을 실행할 수 있음.
   try {
-    const result = yield call(loadPostAPI, action.data);
+    const result = yield call(loadPostAPI, action.lastId);
     yield put({
       type: LOAD_POST_SUCCESS,
       data: result.data,
@@ -24,13 +28,13 @@ function* loadPost(action) { // saga는 여러개의 액션을 실행할 수 있
   } catch (err) {
     yield put({ // put은 dispatch와 거의 같음.
       type: LOAD_POST_FAILURE,
-      data: err.response.data,
+      // data: err.response,
     });
   }
 }
 
 function addPostAPI(data) {
-  return axios.post('/post', { content: data }); // POST/post
+  return axios.post('/post', data); // POST/post
 }
 
 function* addPost(action) { // saga는 여러개의 액션을 실행할 수 있음.
@@ -140,6 +144,48 @@ function* unlikePost(action) {
   }
 }
 
+function uploadImagesAPI(data) {
+  return axios.post('/post/images', data);
+}
+
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data); // action.data: imageFormData
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+      // data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({ // put은 dispatch와 거의 같음.
+      type: UPLOAD_IMAGES_FAILURE,
+      // data: err.response.data,
+    });
+  }
+}
+
+function retweetAPI(data) {
+  return axios.post(`/post/${data}/retweet`);
+}
+
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data); // action.data: imageFormData
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data,
+      // data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({ // put은 dispatch와 거의 같음.
+      type: RETWEET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -164,8 +210,18 @@ function* watchUnlikePost() {
   yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
 }
 
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
+}
+
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweet);
+}
+
 export default function* postSaga() {
   yield all([
+    fork(watchRetweet),
+    fork(watchUploadImages),
     fork(watchAddPost),
     fork(watchLoadPost),
     fork(watchRemovePost),

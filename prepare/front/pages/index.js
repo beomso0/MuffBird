@@ -8,8 +8,14 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePost, loadPostLoading } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePost, loadPostLoading, retweetError, retweetDone, addPostDone } = useSelector((state) => state.post);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
 
   useEffect(() => {
     dispatch({
@@ -22,15 +28,17 @@ const Home = () => {
 
   useEffect(() => { // infinite scroll 구현
     function onScroll() {
-      console.log(
-        window.scrollY,
-        document.documentElement.clientHeight,
-        document.documentElement.scrollHeight,
-      );
+      // console.log(
+      //   window.scrollY,
+      //   document.documentElement.clientHeight,
+      //   document.documentElement.scrollHeight,
+      // );
       if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
         if (hasMorePost && !loadPostLoading) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
           dispatch({
             type: LOAD_POST_REQUEST,
+            lastId,
           });
         }
       }
@@ -40,7 +48,8 @@ const Home = () => {
     return () => {
       window.removeEventListener('scroll', onScroll);
     }; // return을 안해주면 메모리에 계속 상주해서 성능 저하될 수 있으니 주의
-  }, [hasMorePost]);
+  }, [hasMorePost, loadPostLoading, mainPosts]);
+
   return (
     <AppLayout>
       {me && <PostFrom />}

@@ -1,4 +1,5 @@
 const express = require('express');
+const { Op } = require('sequelize');
 
 const { Post, User, Image, Comment } = require('../models');
 
@@ -6,7 +7,14 @@ const router = express.Router();
 
 router.get('/', async (req, res, next) => { // GET / posts
   try {
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) { // 쿼리스트링으로 받은 값은 req.query안에 들어있음
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }
+      // --> id가 lastId가 작은 것들만 불러오기 
+      // Op: 오퍼레이터. 연산자.
+    }     
     const posts = await Post.findAll({
+      where,
       limit: 10, 
       order: [
         ['createdAt', 'DESC'],
@@ -27,6 +35,15 @@ router.get('/', async (req, res, next) => { // GET / posts
         model: User,
         as: 'Likers',
         attributes: ['id'],
+      }, {
+        model: Post,
+        as: 'Retweet',
+        include: [{
+          model: User,
+          attributes: ['id', 'nickname'],
+        }, {
+          model: Image,
+        }]
       }],
     });
     console.log(posts);
