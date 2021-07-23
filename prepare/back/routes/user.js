@@ -6,6 +6,7 @@ const { User, Post } = require('../models'); // --> db.User 가져옴. (구조�
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 router.get('/', async (req, res, next) => { // --> GET/user
+  console.log(req.headers);
   try {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
@@ -36,6 +37,41 @@ router.get('/', async (req, res, next) => { // --> GET/user
   }
 });
 
+router.get('/:userId', async (req, res, next) => { // --> GET/user/1
+  try {
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id: req.params.userId },
+      attributes: {
+        exclude: ['password'], // 전체에서 password만 제외하고 정보 가져오기
+      },
+      include: [{
+        model: Post,
+        attributes: ['id'], // 프론트에 필요한 정보만 전달하기 위해서
+      }, {
+        model: User,
+        as: 'Followings',
+        attributes: ['id'],
+      }, {
+        model: User,
+        as: 'Followers',
+        attributes: ['id'],
+      }],
+    });
+    if (fullUserWithoutPassword) {
+      const data = fullUserWithoutPassword.toJSON(); // sequelize에서 받은 데이터는 json으로 변환해서 다뤄줘야 함.
+      data.Posts = data.Posts.length; // 개인정보 보호를 위해.
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(404).send('존재하지 않는 사용자입니다.');
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+4
 router.post('/login', isNotLoggedIn ,(req, res, next) => {
   passport.authenticate('local', (err, user, info) => { // (err,user,info) 여기는 done이 넘겨주는 콜백 부분
     if (err) { // 서버 에러

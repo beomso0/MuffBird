@@ -9,8 +9,30 @@ import {
   UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
   UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE,
   RETWEET_REQUEST, RETWEET_SUCCESS, RETWEET_FAILURE,
+  LOAD_ONE_POST_REQUEST, LOAD_ONE_POST_SUCCESS, LOAD_ONE_POST_FAILURE,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
+
+function loadOnePostAPI(data) {
+  return axios.get(`/post/${data}`); // lastId가 undefined인 경우에는 0으로
+  // get 에서 데이터 선택해서 불러올 때는 ? 이후에 / key = value / 형태로 query string을 만들어 보냄.
+  // --> 주소를 캐싱하면 데이터까지 캐싱할 수 있어서 좋음. --> get만의 이점.
+}
+
+function* loadOnePost(action) { // saga는 여러개의 액션을 실행할 수 있음.
+  try {
+    const result = yield call(loadOnePostAPI, action.data);
+    yield put({
+      type: LOAD_ONE_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({ // put은 dispatch와 거의 같음.
+      type: LOAD_ONE_POST_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
 
 function loadPostAPI(lastId) {
   return axios.get(`/posts?lastId=${lastId || 0}`); // lastId가 undefined인 경우에는 0으로
@@ -218,12 +240,17 @@ function* watchRetweet() {
   yield takeLatest(RETWEET_REQUEST, retweet);
 }
 
+function* watchLoadOnePost() {
+  yield takeLatest(LOAD_ONE_POST_REQUEST, loadOnePost);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchRetweet),
     fork(watchUploadImages),
     fork(watchAddPost),
     fork(watchLoadPost),
+    fork(watchLoadOnePost),
     fork(watchRemovePost),
     fork(watchAddComment),
     fork(watchLikePost),

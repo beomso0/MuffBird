@@ -1,6 +1,9 @@
 import produce from 'immer';
 
 export const initialState = {
+  loadUserLoading: false,
+  loadUserDone: false, // 로그인 시도 중.
+  loadUserError: null,
   loadMyInfoLoading: false,
   loadMyInfoDone: false, // 로그인 시도 중.
   loadMyInfoError: null,
@@ -29,8 +32,7 @@ export const initialState = {
   removeFollowerDone: false, // 로그인 시도 중.
   removeFollowerFailure: null,
   me: null,
-  signUpData: {},
-  loginData: {},
+  userInfo: null,
 };
 
 export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
@@ -40,6 +42,10 @@ export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
 export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
 export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
 
 export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
 export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
@@ -79,6 +85,20 @@ export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOAD_USER_REQUEST: // saga에서 action type name에 맞게 지정.
+        draft.loadUserlLoading = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.loadUserError = null;
+        draft.loadUserDone = false;
+        break;
+      case LOAD_USER_SUCCESS: // saga에서 action type name에 맞게 지정.
+        draft.loadUserLoading = false;
+        draft.loadUserDone = true; // 내가 바꾸고 싶은 부분만 수정
+        draft.userInfo = action.data;
+        break;
+      case LOAD_USER_FAILURE: // saga에서 action type name에 맞게 지정.
+        draft.loadUserLoading = false;
+        draft.loadUserError = action.error;
+        break;
       case LOAD_MY_INFO_REQUEST: // saga에서 action type name에 맞게 지정.
         draft.loadMyInfolLoading = true; // 내가 바꾸고 싶은 부분만 수정
         draft.loadMyInfoError = null;

@@ -2,6 +2,7 @@ import produce from 'immer';
 
 export const initialState = {
   mainPosts: [],
+  singlePost: null,
   imagePaths: [],
   hasMorePost: true,
   addPostLoading: false, // 게시 완료되면 true
@@ -10,6 +11,9 @@ export const initialState = {
   loadPostLoading: false, // 게시 완료되면 true
   loadPostDone: false,
   loadPostError: null,
+  loadOnePostLoading: false, // 게시 완료되면 true
+  loadOnePostDone: false,
+  loadOnePostError: null,
   removePostLoading: false, // 게시 완료되면 true
   removePostDone: false,
   removePostError: null,
@@ -63,6 +67,10 @@ export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
+
+export const LOAD_ONE_POST_REQUEST = 'LOAD_ONE_POST_REQUEST';
+export const LOAD_ONE_POST_SUCCESS = 'LOAD_ONE_POST_SUCCESS';
+export const LOAD_ONE_POST_FAILURE = 'LOAD_ONE_POST_FAILURE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -177,6 +185,21 @@ const reducer = (state = initialState, action) => {
       case LOAD_POST_FAILURE:
         draft.loadPostLoading = false;
         draft.loadPostError = action.error;
+        break;
+      case LOAD_ONE_POST_REQUEST:
+        draft.loadOnePostLoading = true;
+        draft.loadOnePostDone = false;
+        draft.loadOnePostError = null;
+        break;
+      case LOAD_ONE_POST_SUCCESS:
+        draft.loadOnePostLoading = false;
+        draft.loadOnePostDone = true;
+        draft.singlePost = action.data;
+        // unshift: 배열의 맨 앞에 요소 추가하고, 그 길이를 return하는 함수
+        break;
+      case LOAD_ONE_POST_FAILURE:
+        draft.loadOnePostLoading = false;
+        draft.loadOnePostError = action.error;
         break;
       case ADD_POST_REQUEST:
         draft.addPostLoading = true;
