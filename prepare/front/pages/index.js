@@ -11,7 +11,7 @@ import wrapper from '../store/configureStore';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePost, loadPostLoading, retweetError, retweetDone, addPostDone } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePost, loadPostLoading, retweetError } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
   useEffect(() => {

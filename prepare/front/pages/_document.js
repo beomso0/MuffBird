@@ -6,10 +6,12 @@ export default class MyDocument extends Document {
   static async getInitialProps(ctx) { // doc or app에서만 사용하는 특수한 ssr 방식?
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
+
     try {
       ctx.renderPage = () => originalRenderPage({
-        enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />),
+        enhanceApp: App => props => sheet.collectStyles(<App {...props} />),
       });
+
       const initialProps = await Document.getInitialProps(ctx);
       return {
         ...initialProps,

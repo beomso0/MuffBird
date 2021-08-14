@@ -68,6 +68,14 @@ export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
+
+export const LOAD_HASHTAG_POSTS_REQUEST = 'LOAD_HASHTAG_POSTS_REQUEST';
+export const LOAD_HASHTAG_POSTS_SUCCESS = 'LOAD_HASHTAG_POSTS_SUCCESS';
+export const LOAD_HASHTAG_POSTS_FAILURE = 'LOAD_HASHTAG_POSTS_FAILURE';
+
 export const LOAD_ONE_POST_REQUEST = 'LOAD_ONE_POST_REQUEST';
 export const LOAD_ONE_POST_SUCCESS = 'LOAD_ONE_POST_SUCCESS';
 export const LOAD_ONE_POST_FAILURE = 'LOAD_ONE_POST_FAILURE';
@@ -170,11 +178,15 @@ const reducer = (state = initialState, action) => {
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error;
         break;
+      case LOAD_USER_POSTS_REQUEST: // 같이 쓰이지 않는 state들은 재사용이 가능.
+      case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_POST_REQUEST:
         draft.loadPostLoading = true;
         draft.loadPostDone = false;
         draft.loadPostError = null;
         break;
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_POST_SUCCESS:
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
@@ -182,6 +194,8 @@ const reducer = (state = initialState, action) => {
         draft.hasMorePost = action.data.length === 10;
         // unshift: 배열의 맨 앞에 요소 추가하고, 그 길이를 return하는 함수
         break;
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_POSTS_FAILURE:
       case LOAD_POST_FAILURE:
         draft.loadPostLoading = false;
         draft.loadPostError = action.error;

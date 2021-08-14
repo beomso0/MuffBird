@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
@@ -7,17 +7,24 @@ import 'antd/dist/antd.css';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useSelector } from 'react-redux';
 
+import Router from 'next/router';
 import LoginForm from './LoginForm';
 import UserProfile from './UserProfile';
+import useInput from '../hooks/useInput';
 
 const SearchInput = styled(Input.Search)`
     vertical-align: middle;
 `; /* antd 컴포도 styled로 커스터마이징 가능 */
 
 const AppLayout = ({ children }) => {
+  const [searchInput, onChangeSearchInput] = useInput('');
   const { me } = useSelector((state) => state.user); // 이게 바뀌면 알아서  page가 rerendering됨.
   // 구조 분해 할당으로 아래와 같이 쓸 수도 있음. 성능 차 있긴 하지만 미미함.
   // const { isLoggedIn } = useSelector((state) => state.user);
+
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
 
   const Global = createGlobalStyle` /* gutter 문제 해결 */
         .ant-row {
@@ -45,7 +52,12 @@ const AppLayout = ({ children }) => {
           <Link href="/profile"><a>프로필</a></Link>
         </Menu.Item>
         <Menu.Item>
-          <SearchInput enterButton />
+          <SearchInput
+            enterButton
+            value={searchInput}
+            onChange={onChangeSearchInput}
+            onSearch={onSearch}
+          />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup"><a>회원가입</a></Link>
